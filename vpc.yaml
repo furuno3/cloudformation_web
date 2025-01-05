@@ -1,0 +1,86 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+# スタック作成時に手動で入力する項目
+Parameters:
+  VPCCiderBlock:
+    Description: VPC CiderBlock ex) 10.0.0.0 -10.255.255.255
+    Type: String
+    AllowedPattern: \b(?:\d{1,3}\.){3}\d{1,3}\/(?:[0-9]|[1-2][0-9]|3[0-2])\b
+
+# スタックが作成するリソース
+Resources:
+#-----------------------------------------
+# VPC
+#-----------------------------------------
+  myVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VPCCiderBlock
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: appVPC
+
+#-----------------------------------------
+# subnet
+#-----------------------------------------
+  publicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select [0, !GetAZs ""]
+      VpcId: !Ref myVPC
+      CidrBlock: 10.0.1.0/24
+      Tags:
+        - Key: Name
+          Value: public-subnet
+
+  privateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select [1, !GetAZs ""]
+      VpcId: !Ref myVPC
+      CidrBlock: 10.0.2.0/24
+      Tags:
+        - Key: Name
+          Value: private-subnet
+
+#-----------------------------------------
+# Internet Gateway
+#-----------------------------------------
+  myInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: myIGW
+
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref myVPC
+      InternetGatewayId: !Ref myInternetGateway
+
+  myRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref myVPC
+      Tags:
+        - Key: Name
+          Value: myRTB
+
+  myRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref myRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref myInternetGateway
+
+  routeTableAssocName:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref publicSubnet
+      RouteTableId: !Ref myRouteTable
+#Outputs:
+#-----------------------------------------
+# スタックの返り値を出力する部分
+#-----------------------------------------
