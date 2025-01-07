@@ -1,6 +1,7 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: 親スタック
 
+# スタック作成時に手動で入力する項目
 Parameters:
   # EC2のAMI ID
   EC2AMIId:
@@ -52,7 +53,11 @@ Parameters:
     MaxLength: 1024
     AllowedPattern: ^[a-zA-Z0-9\-_]*\.(sh)$
 
+# スタックが作成するリソース
 Resources:
+#-----------------------------------------
+# VPC
+#-----------------------------------------
   vpcStack:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -60,6 +65,9 @@ Resources:
       Parameters:
            VPCCiderBlock: 10.0.0.0/16
 
+#-----------------------------------------
+# EC2
+#-----------------------------------------
   EC2Stack:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -67,10 +75,22 @@ Resources:
       Parameters:
            EC2InstanceName: usersApp
            EC2AMIId: !Ref EC2AMIId
-           EC2SecurityGroupId: !Ref EC2SecurityGroupId
-           publicSubnetId: !ImportValue subnetID
+           EC2SecurityGroupId: !GetAtt securityGroupStack.Outputs.EC2SecurityGroupId
+           PublicSubnetId: !GetAtt vpcStack.Outputs.SubnetID
            EC2ShiftTag: !Ref EC2ShiftTag
            EC2ExcludeFromShutdownTag: !Ref EC2ExcludeFromShutdownTag
            HostName: !Ref HostName
            S3BucketName: !Ref S3BucketName
            ScriptFileName: !Ref ScriptFileName
+
+#-----------------------------------------
+# securityGroup
+#-----------------------------------------
+  securityGroupStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://test-f-aidai.s3.ap-northeast-1.amazonaws.com/CLF-template/securitygroup.yaml
+      Parameters:
+           VPCId: !GetAtt vpcStack.Outputs.VPCID
+           DBInstanceIdentifier: test-f-db
+           EC2InstanceName: test-f-web
