@@ -1,7 +1,6 @@
 /ec2.yaml
 /ec2_userdata.sh
 /org
-/parent-stack.yaml
 /rds.yaml
 /securitygroup.yaml
 /temple.yaml
