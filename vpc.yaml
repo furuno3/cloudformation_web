@@ -80,7 +80,9 @@ Resources:
     Properties:
       SubnetId: !Ref publicSubnet
       RouteTableId: !Ref myRouteTable
-#Outputs:
+Outputs:
 #-----------------------------------------
 # スタックの返り値を出力する部分
 #-----------------------------------------
+  SubnetID:
+    Value: !Ref publicSubnet
