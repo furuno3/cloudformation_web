@@ -76,7 +76,7 @@ Resources:
            EC2InstanceName: usersApp
            EC2AMIId: !Ref EC2AMIId
            EC2SecurityGroupId: !GetAtt securityGroupStack.Outputs.EC2SecurityGroupId
-           PublicSubnetId: !GetAtt vpcStack.Outputs.SubnetID
+           PublicSubnetId: !GetAtt vpcStack.Outputs.publicSubnetID
            EC2ShiftTag: !Ref EC2ShiftTag
            EC2ExcludeFromShutdownTag: !Ref EC2ExcludeFromShutdownTag
            HostName: !Ref HostName
@@ -94,3 +94,4 @@ Resources:
            VPCId: !GetAtt vpcStack.Outputs.VPCID
            DBInstanceIdentifier: test-f-db
            EC2InstanceName: test-f-web
+
