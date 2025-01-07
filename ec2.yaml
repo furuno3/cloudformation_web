@@ -1,0 +1,142 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  # EC2のインスタンス名
+  EC2InstanceName:
+    Description: The name of the EC2 instance to be created.
+    Type: String
+    MaxLength: 59
+    AllowedPattern: ^[a-zA-Z0-9\+=,\.@\-_]*$
+
+  # EC2のAMI ID
+  EC2AMIId:
+    Description: The AMI ID of the EC2 instance to be created.
+    Type: AWS::EC2::Image::Id
+
+  # EC2のセキュリティグループID
+  EC2SecurityGroupId:
+    Description: The ID of the EC2 security group to be created.
+    Type: String
+
+  # パブリックサブネットID
+  PublicSubnetId:
+    Description: The ID of the public subnet to be created.
+    Type: AWS::EC2::Subnet::Id
+
+  # EC2のshiftタグの値
+  EC2ShiftTag:
+    Description: Set day or night shift tags for EC2.
+    Type: String
+    AllowedValues:
+      - day
+      - night
+
+  # EC2のexclude_from_shutdownタグの値
+  EC2ExcludeFromShutdownTag:
+    Description: Set True or False exclude_from_shutdown tags for EC2.
+    Type: String
+    AllowedValues:
+      - 'True'
+      - 'False'
+
+  # ホスト名
+  HostName:
+    Description: The name of the host to be created.
+    Type: String
+    MinLength: 1
+    MaxLength: 63
+    AllowedPattern: ^[a-z0-9][a-z0-9\-]*[a-z0-9]$
+
+  # S3のバケット名
+  S3BucketName:
+    Description: The name of the S3 bucket.
+    Type: String
+    MinLength: 3
+    MaxLength: 63
+    AllowedPattern: ^[a-z0-9](?!.*\.\.)(?!.*\.-)(?!.*-\.)[a-z0-9\.\-]*[a-z0-9]$
+
+  # スクリプトファイルの名前
+  ScriptFileName:
+    Description: The name of the script file.
+    Type: String
+    MinLength: 3
+    MaxLength: 1024
+    AllowedPattern: ^[a-zA-Z0-9\-_]*\.(sh)$
+
+Resources:
+#----------------------------------------
+# EC2のロール
+#----------------------------------------
+  MyEC2Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - arn:aws:iam::aws:policy/CloudWatchAgentAdminPolicy
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+      # RoleName: !Sub ${EC2InstanceName}-role
+      # ロール名は自動で生成される
+
+  MyInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref MyEC2Role
+
+#----------------------------------------
+# EC2インスタンス
+#----------------------------------------
+  MyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      IamInstanceProfile: !Ref MyInstanceProfile
+      ImageId: !Ref EC2AMIId
+      InstanceType: t2.micro
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: 0
+          GroupSet:
+            - !Ref EC2SecurityGroupId
+          SubnetId: !Ref PublicSubnetId
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          # パラメータを環境変数として設定
+          export HOST_NAME=${HostName}
+
+          # S3からスクリプトをダウンロード
+          aws s3 cp s3://${S3BucketName}/${ScriptFileName} /tmp/${ScriptFileName}
+
+          # ダウンロードしたスクリプトを実行
+          chmod +x /tmp/${ScriptFileName}
+          /tmp/${ScriptFileName}
+      Tags:
+        - Key: Name
+          Value: !Ref EC2InstanceName
+        - Key: shift
+          Value: !Ref EC2ShiftTag
+        - Key: exclude_from_shutdown
+          Value: !Ref EC2ExcludeFromShutdownTag
+
+Outputs:
+  EC2InstanceId:
+    Value: !Ref MyEC2Instance
+
+  # EC2のパブリックDNS
+  EC2PublicDnsName:
+    Value: !GetAtt MyEC2Instance.PublicDnsName
+
+  # EC2のパブリックIP
+  EC2PublicIp:
+    Value: !GetAtt MyEC2Instance.PublicIp

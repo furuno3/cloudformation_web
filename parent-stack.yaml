@@ -1,6 +1,57 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: 親スタック
 
+Parameters:
+  # EC2のAMI ID
+  EC2AMIId:
+    Description: The AMI ID of the EC2 instance to be created.
+    Type: AWS::EC2::Image::Id
+
+   # EC2のセキュリティグループID
+  EC2SecurityGroupId:
+    Description: The ID of the EC2 security group to be created.
+    Type: String
+
+  # EC2のshiftタグの値
+  EC2ShiftTag:
+    Description: Set day or night shift tags for EC2.
+    Type: String
+    AllowedValues:
+      - day
+      - night
+
+  # EC2のexclude_from_shutdownタグの値
+  EC2ExcludeFromShutdownTag:
+    Description: Set True or False exclude_from_shutdown tags for EC2.
+    Type: String
+    AllowedValues:
+      - 'True'
+      - 'False'
+
+  # ホスト名
+  HostName:
+    Description: The name of the host to be created.
+    Type: String
+    MinLength: 1
+    MaxLength: 63
+    AllowedPattern: ^[a-z0-9][a-z0-9\-]*[a-z0-9]$
+
+  # S3のバケット名
+  S3BucketName:
+    Description: The name of the S3 bucket.
+    Type: String
+    MinLength: 3
+    MaxLength: 63
+    AllowedPattern: ^[a-z0-9](?!.*\.\.)(?!.*\.-)(?!.*-\.)[a-z0-9\.\-]*[a-z0-9]$
+
+  # スクリプトファイルの名前
+  ScriptFileName:
+    Description: The name of the script file.
+    Type: String
+    MinLength: 3
+    MaxLength: 1024
+    AllowedPattern: ^[a-zA-Z0-9\-_]*\.(sh)$
+
 Resources:
   vpcStack:
     Type: AWS::CloudFormation::Stack
@@ -8,3 +59,18 @@ Resources:
       TemplateURL: https://test-f-aidai.s3.ap-northeast-1.amazonaws.com/CLF-template/vpc.yaml
       Parameters:
            VPCCiderBlock: 10.0.0.0/16
+
+  EC2Stack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://test-f-aidai.s3.ap-northeast-1.amazonaws.com/CLF-template/ec2.yaml
+      Parameters:
+           EC2InstanceName: usersApp
+           EC2AMIId: !Ref EC2AMIId
+           EC2SecurityGroupId: !Ref EC2SecurityGroupId
+           publicSubnetId: !ImportValue subnetID
+           EC2ShiftTag: !Ref EC2ShiftTag
+           EC2ExcludeFromShutdownTag: !Ref EC2ExcludeFromShutdownTag
+           HostName: !Ref HostName
+           S3BucketName: !Ref S3BucketName
+           ScriptFileName: !Ref ScriptFileName
