@@ -84,5 +84,11 @@ Outputs:
 #-----------------------------------------
 # スタックの返り値を出力する部分
 #-----------------------------------------
-  SubnetID:
+  publicSubnetID:
     Value: !Ref publicSubnet
+
+  privateSubnetID:
+    Value: !Ref privateSubnet
+
+  VPCID:
+    Value: !Ref myVPC
