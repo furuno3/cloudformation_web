@@ -56,8 +56,8 @@ Parameters:
     AllowedPattern: ^[a-z0-9](?!.*\.\.)(?!.*\.-)(?!.*-\.)[a-z0-9\.\-]*[a-z0-9]$
 
   # スクリプトファイルの名前
-  ScriptFileName:
-    Description: The name of the script file.
+  ScriptUserDataPath:
+    Description: The path of the script file. ex) dir/filename
     Type: String
     MinLength: 3
     MaxLength: 1024
@@ -116,11 +116,11 @@ Resources:
           export HOST_NAME=${HostName}
 
           # S3からスクリプトをダウンロード
-          aws s3 cp s3://${S3BucketName}/${ScriptFileName} /tmp/${ScriptFileName}
+          aws s3 cp s3://${S3BucketName}/${ScriptUserDataPath} /tmp/${ScriptUserDataPath}
 
           # ダウンロードしたスクリプトを実行
-          chmod +x /tmp/${ScriptFileName}
-          /tmp/${ScriptFileName}
+          chmod +x /tmp/${ScriptUserDataPath}
+          /tmp/${ScriptUserDataPath}
       Tags:
         - Key: Name
           Value: !Ref EC2InstanceName
