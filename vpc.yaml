@@ -9,9 +9,7 @@ Parameters:
 
   VPCName:
     Description: VPC Name
-    Default:
-         - Key: Name
-           Value: MyVPC
+    Default: MyVPC
     Type: String
 
 
