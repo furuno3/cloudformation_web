@@ -50,14 +50,6 @@ Parameters:
     MaxLength: 63
     AllowedPattern: ^[a-z0-9](?!.*\.\.)(?!.*\.-)(?!.*-\.)[a-z0-9\.\-]*[a-z0-9]$
 
-  # スクリプトファイルの名前
-  ScriptFileName:
-    Description: The name of the script file.
-    Type: String
-    MinLength: 3
-    MaxLength: 1024
-    AllowedPattern: ^[a-zA-Z0-9\-_]*\.(sh)$
-
 # スタックが作成するリソース
 Resources:
 #-----------------------------------------
@@ -87,7 +79,7 @@ Resources:
            EC2ExcludeFromShutdownTag: !Ref EC2ExcludeFromShutdownTag
            HostName: !Sub ${GroupName}-app-server
            S3BucketName: !Ref S3BucketName
-           ScriptFileName: !Ref ScriptFileName
+           ScriptFileName: script/ec2_userdata.sh
 
   DBEC2Stack:
     Type: AWS::CloudFormation::Stack
@@ -102,7 +94,7 @@ Resources:
            EC2ExcludeFromShutdownTag: !Ref EC2ExcludeFromShutdownTag
            HostName: !Sub ${GroupName}-db-server
            S3BucketName: !Ref S3BucketName
-           ScriptFileName: !Ref ScriptFileName
+           ScriptFileName: script/ec2_db_userdata.sh
 
 
 #-----------------------------------------
