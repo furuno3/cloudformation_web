@@ -4,8 +4,8 @@ Description: 親スタック
 # スタック作成時に手動で入力する項目
 Parameters:
   # リソースのグループ名
-  ResourceGroup:
-    Description: created resource group
+  GroupName:
+    Description: resource group name.
     Type: String
 
   # EC2のAMI ID
@@ -73,20 +73,36 @@ Resources:
 #-----------------------------------------
 # EC2
 #-----------------------------------------
-  EC2Stack:
+  AppEC2Stack:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: https://test-f-aidai.s3.ap-northeast-1.amazonaws.com/CLF-template/ec2.yaml
       Parameters:
-           EC2InstanceName: !Sub ${ResourceGroup}-app
+           EC2InstanceName: !Sub ${GroupName}-app
            EC2AMIId: !Ref EC2AMIId
            EC2SecurityGroupId: !GetAtt securityGroupStack.Outputs.EC2SecurityGroupId
            PublicSubnetId: !GetAtt vpcStack.Outputs.publicSubnetID
            EC2ShiftTag: !Ref EC2ShiftTag
            EC2ExcludeFromShutdownTag: !Ref EC2ExcludeFromShutdownTag
-           HostName: !Ref HostName
+           HostName: !Sub ${GroupName}-app-server
            S3BucketName: !Ref S3BucketName
            ScriptFileName: !Ref ScriptFileName
+
+  DBEC2Stack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://test-f-aidai.s3.ap-northeast-1.amazonaws.com/CLF-template/ec2.yaml
+      Parameters:
+           EC2InstanceName: !Sub ${GroupName}-db
+           EC2AMIId: !Ref EC2AMIId
+           EC2SecurityGroupId: !GetAtt securityGroupStack.Outputs.DataBaseSecurityGroupId
+           PublicSubnetId: !GetAtt vpcStack.Outputs.privateSubnetID
+           EC2ShiftTag: !Ref EC2ShiftTag
+           EC2ExcludeFromShutdownTag: !Ref EC2ExcludeFromShutdownTag
+           HostName: !Sub ${GroupName}-db-server
+           S3BucketName: !Ref S3BucketName
+           ScriptFileName: !Ref ScriptFileName
+
 
 #-----------------------------------------
 # securityGroup
@@ -97,6 +113,6 @@ Resources:
       TemplateURL: https://test-f-aidai.s3.ap-northeast-1.amazonaws.com/CLF-template/securitygroup.yaml
       Parameters:
            VPCId: !GetAtt vpcStack.Outputs.VPCID
-           DBInstanceIdentifier: !Sub ${ResourceGroup}-db
-           EC2InstanceName: !Sub ${ResourceGroup}-app
+           DBInstanceIdentifier: !Sub ${GroupName}-db
+           EC2InstanceName: !Sub ${GroupName}-app
 
