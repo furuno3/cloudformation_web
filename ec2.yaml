@@ -61,7 +61,7 @@ Parameters:
     Type: String
     MinLength: 3
     MaxLength: 1024
-    AllowedPattern: ^[a-zA-Z0-9\-_]*\.(sh)$
+    AllowedPattern: ^[a-zA-Z0-9\-_\/]*\.(sh)$
 
 Resources:
 #----------------------------------------
