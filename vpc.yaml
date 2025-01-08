@@ -25,7 +25,7 @@ Resources:
       EnableDnsSupport: true
       Tags:
         - Key: Name
-          Value: appVPC
+          Value: !Ref VPCName
 
 #-----------------------------------------
 # subnet
