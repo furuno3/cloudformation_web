@@ -79,6 +79,6 @@ Resources:
 
 Outputs:
   DataBaseSecurityGroupId:
-    Value: !Ref MyDatabaseSecurityGroup
+    Value: !Ref MyDataBaseSecurityGroup
   EC2SecurityGroupId:
     Value: !Ref MyEC2SecurityGroup
