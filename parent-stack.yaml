@@ -3,6 +3,11 @@ Description: 親スタック
 
 # スタック作成時に手動で入力する項目
 Parameters:
+  # リソースのグループ名
+  ResourceGroup:
+    Description: created resource group
+    Type: String
+
   # EC2のAMI ID
   EC2AMIId:
     Description: The AMI ID of the EC2 instance to be created.
@@ -73,7 +78,7 @@ Resources:
     Properties:
       TemplateURL: https://test-f-aidai.s3.ap-northeast-1.amazonaws.com/CLF-template/ec2.yaml
       Parameters:
-           EC2InstanceName: usersApp
+           EC2InstanceName: !Sub ${ResourceGroup}-app
            EC2AMIId: !Ref EC2AMIId
            EC2SecurityGroupId: !GetAtt securityGroupStack.Outputs.EC2SecurityGroupId
            PublicSubnetId: !GetAtt vpcStack.Outputs.publicSubnetID
@@ -92,6 +97,6 @@ Resources:
       TemplateURL: https://test-f-aidai.s3.ap-northeast-1.amazonaws.com/CLF-template/securitygroup.yaml
       Parameters:
            VPCId: !GetAtt vpcStack.Outputs.VPCID
-           DBInstanceIdentifier: test-f-db
-           EC2InstanceName: test-f-web
+           DBInstanceIdentifier: !Sub ${ResourceGroup}-db
+           EC2InstanceName: !Sub ${ResourceGroup}-app
 
