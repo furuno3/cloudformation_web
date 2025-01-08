@@ -103,6 +103,7 @@ Resources:
       IamInstanceProfile: !Ref MyInstanceProfile
       ImageId: !Ref EC2AMIId
       InstanceType: t2.micro
+      KeyName: test-f.pem
       NetworkInterfaces:
         - AssociatePublicIpAddress: true
           DeviceIndex: 0
