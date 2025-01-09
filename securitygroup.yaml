@@ -28,13 +28,20 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: test security group
-      GroupName: !Sub ${DBInstanceIdentifier}-sg
       VpcId: !Ref VPCId
       SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 3306
-          ToPort: 3306
-          SourceSecurityGroupId: !Ref MyEC2SecurityGroup
+
+  #----------------------------------------
+  # インバウンドルール
+  #----------------------------------------
+  MySQLInboundToDB:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      FromPort: 3306
+      ToPort: 3306
+      SourceSecurityGroupId: !Ref MyEC2SecurityGroup
+      GroupId: !Ref MyDataBaseSecurityGroup
 
   SSHInboundToDB:
     Type: AWS::EC2::SecurityGroupIngress
@@ -52,7 +59,6 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: test security group
-      GroupName: !Sub ${EC2InstanceName}-sg
       VpcId: !Ref VPCId
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -72,17 +78,25 @@ Resources:
           FromPort: 443
           ToPort: 443
           CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          DestinationSecurityGroupId: !Ref MyDataBaseSecurityGroup
 
-  OutboundRuleEC2toRDS:
+  #----------------------------------------
+  # アウトバウンドルール
+  #----------------------------------------
+  DataBaseOutboundfromEC2:
     Type: AWS::EC2::SecurityGroupEgress
     Properties:
       IpProtocol: tcp
       FromPort: 3306
       ToPort: 3306
+      DestinationSecurityGroupId: !Ref MyDataBaseSecurityGroup
+      GroupId: !Ref MyEC2SecurityGroup
+
+  SSHOutboundfromEC2:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
       DestinationSecurityGroupId: !Ref MyDataBaseSecurityGroup
       GroupId: !Ref MyEC2SecurityGroup
 
