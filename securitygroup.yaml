@@ -30,6 +30,12 @@ Resources:
       GroupDescription: test security group
       GroupName: !Sub ${DBInstanceIdentifier}-sg
       VpcId: !Ref VPCId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          SourceSecurityGroupId: !Ref MyEC2SecurityGroup
+
 
   InboundRuleEC2toRDS:
     Type: AWS::EC2::SecurityGroupIngress
@@ -67,6 +73,10 @@ Resources:
           FromPort: 443
           ToPort: 443
           CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          DestinationSecurityGroupId: !Ref MyDataBaseSecurityGroup
 
   OutboundRuleEC2toRDS:
     Type: AWS::EC2::SecurityGroupEgress
