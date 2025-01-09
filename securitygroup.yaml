@@ -32,17 +32,16 @@ Resources:
       VpcId: !Ref VPCId
       SecurityGroupIngress:
         - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
+          FromPort: 3306
+          ToPort: 3306
           SourceSecurityGroupId: !Ref MyEC2SecurityGroup
 
-
-  InboundRuleEC2toRDS:
+  SSHInboundToDB:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
       IpProtocol: tcp
-      FromPort: 3306
-      ToPort: 3306
+      FromPort: 22
+      ToPort: 22
       SourceSecurityGroupId: !Ref MyEC2SecurityGroup
       GroupId: !Ref MyDataBaseSecurityGroup
 
