@@ -108,7 +108,7 @@ Resources:
   VPCEndpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:
-      VpcId: myVPC
+      VpcId: !Ref myVPC
       ServiceName: !Sub com.amazonaws.${AWS::Region}.ssm
       SubnetIds:
         - !Ref privateSubnet
