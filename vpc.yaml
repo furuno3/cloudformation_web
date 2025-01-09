@@ -87,6 +87,36 @@ Resources:
     Properties:
       SubnetId: !Ref publicSubnet
       RouteTableId: !Ref myRouteTable
+
+#-----------------------------------------
+# VPCエンドポイント
+#-----------------------------------------
+  VPCEndpointSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow access to the VPC endpoint
+      VpcId:
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 10.0.0.0/16
+      Tags:
+        - Key: Name
+          Value: VPCEndpointSecurityGroup
+
+  VPCEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcId: myVPC
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.ssm
+      SubnetIds:
+        - !Ref privateSubnet
+      SecurityGroupIds:
+        - !Ref VPCEndpointSecurityGroup
+      VpcEndpointType: Interface
+      PrivateDnsEnabled: true
+
 Outputs:
 #-----------------------------------------
 # スタックの返り値を出力する部分
