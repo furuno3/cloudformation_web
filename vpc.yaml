@@ -91,6 +91,7 @@ Resources:
 #-----------------------------------------
 # VPCエンドポイント
 #-----------------------------------------
+  # VPCエンドポイント用のセキュリティグループ
   VPCEndpointSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -105,7 +106,7 @@ Resources:
         - Key: Name
           Value: VPCEndpointSecurityGroup
 
-  VPCEndpoint:
+  SSMVPCEndpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:
       VpcId: !Ref myVPC
@@ -116,6 +117,41 @@ Resources:
         - !Ref VPCEndpointSecurityGroup
       VpcEndpointType: Interface
       PrivateDnsEnabled: true
+      Tags:
+        - Key: Name
+          Value: ssm-endpoint
+
+  SSMMessageVPCEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcId: !Ref myVPC
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.ssmmessages
+      SubnetIds:
+        - !Ref privateSubnet
+      SecurityGroupIds:
+        - !Ref VPCEndpointSecurityGroup
+      VpcEndpointType: Interface
+      PrivateDnsEnabled: true
+      Tags:
+        - Key: Name
+          Value: ssmmsg-endpoint
+
+  EC2MessageVPCEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcId: !Ref myVPC
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.ec2messages
+      SubnetIds:
+        - !Ref privateSubnet
+      SecurityGroupIds:
+        - !Ref VPCEndpointSecurityGroup
+      VpcEndpointType: Interface
+      PrivateDnsEnabled: true
+      Tags:
+        - Key: Name
+          Value: ec2msg-endpoint
+
+
 
 Outputs:
 #-----------------------------------------
