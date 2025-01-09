@@ -29,7 +29,6 @@ Resources:
     Properties:
       GroupDescription: test security group
       VpcId: !Ref VPCId
-      SecurityGroupIngress:
 
   #----------------------------------------
   # インバウンドルール
