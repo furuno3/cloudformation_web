@@ -90,6 +90,7 @@ Resources:
 
 #-----------------------------------------
 # VPCエンドポイント
+# プライベートサブネットのSSM接続に必要
 #-----------------------------------------
   # VPCエンドポイント用のセキュリティグループ
   VPCEndpointSecurityGroup:
@@ -106,6 +107,7 @@ Resources:
         - Key: Name
           Value: VPCEndpointSecurityGroup
 
+  # SSMMessageのVPCエンドポイント
   SSMVPCEndpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:
@@ -121,6 +123,7 @@ Resources:
         - Key: Name
           Value: ssm-endpoint
 
+  # SSMMessageのVPCエンドポイント
   SSMMessageVPCEndpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:
@@ -136,6 +139,7 @@ Resources:
         - Key: Name
           Value: ssmmsg-endpoint
 
+  # EC2MessageのVPCエンドポイント
   EC2MessageVPCEndpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:
