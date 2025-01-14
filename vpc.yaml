@@ -88,60 +88,6 @@ Resources:
       SubnetId: !Ref publicSubnet
       RouteTableId: !Ref myRouteTable
 
-#-----------------------------------------
-# VPCエンドポイント
-# プライベートサブネットのSSM接続に必要
-#-----------------------------------------
-  # SSMMessageのVPCエンドポイント
-  SSMVPCEndpoint:
-    Type: AWS::EC2::VPCEndpoint
-    Properties:
-      VpcId: !Ref myVPC
-      ServiceName: !Sub com.amazonaws.${AWS::Region}.ssm
-      SubnetIds:
-        - !Ref privateSubnet
-      SecurityGroupIds:
-        - !Ref VPCEndpointSecurityGroup
-      VpcEndpointType: Interface
-      PrivateDnsEnabled: true
-      Tags:
-        - Key: Name
-          Value: ssm-endpoint
-
-  # SSMMessageのVPCエンドポイント
-  SSMMessageVPCEndpoint:
-    Type: AWS::EC2::VPCEndpoint
-    Properties:
-      VpcId: !Ref myVPC
-      ServiceName: !Sub com.amazonaws.${AWS::Region}.ssmmessages
-      SubnetIds:
-        - !Ref privateSubnet
-      SecurityGroupIds:
-        - !Ref VPCEndpointSecurityGroup
-      VpcEndpointType: Interface
-      PrivateDnsEnabled: true
-      Tags:
-        - Key: Name
-          Value: ssmmsg-endpoint
-
-  # EC2MessageのVPCエンドポイント
-  EC2MessageVPCEndpoint:
-    Type: AWS::EC2::VPCEndpoint
-    Properties:
-      VpcId: !Ref myVPC
-      ServiceName: !Sub com.amazonaws.${AWS::Region}.ec2messages
-      SubnetIds:
-        - !Ref privateSubnet
-      SecurityGroupIds:
-        - !Ref VPCEndpointSecurityGroup
-      VpcEndpointType: Interface
-      PrivateDnsEnabled: true
-      Tags:
-        - Key: Name
-          Value: ec2msg-endpoint
-
-
-
 Outputs:
 #-----------------------------------------
 # スタックの返り値を出力する部分
