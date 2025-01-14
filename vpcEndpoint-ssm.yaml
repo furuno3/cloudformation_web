@@ -12,6 +12,10 @@ Parameters:
     Type: AWS::EC2::Subnet::Id
     Description: The Subnet-Id Where you wont to set up the SSM endpoint.
 
+  SecurityGroupId:
+    Type: AWS::EC2::SecurityGroup::Id
+    Description: The SecurityGroup-Id Where you wont to set up the SSM endpoint.
+
 
 Resources:
 #-----------------------------------------
