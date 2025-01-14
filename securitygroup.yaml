@@ -6,20 +6,6 @@ Parameters:
     Description: The ID of the VPC to be created.
     Type: AWS::EC2::VPC::Id
 
-  # RDSのDBインスタンス識別子
-  DBInstanceIdentifier:
-    Description: The identifier of the DB instance to be created.
-    Type: String
-    MinLength: 1
-    MaxLength: 60
-    AllowedPattern: ^[a-zA-Z](?!.*--)[a-zA-Z0-9\-]*[a-zA-Z0-9]$
-
-  # EC2のインスタンス名
-  EC2InstanceName:
-    Description: The name of the EC2 instance to be created.
-    Type: String
-    MaxLength: 253
-
 Resources:
 #----------------------------------------
 # RDSのセキュリティグループ
