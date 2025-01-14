@@ -1,4 +1,3 @@
-
 AWSTemplateFormatVersion: 2010-09-09
 
 Parameters:
@@ -18,8 +17,71 @@ Resources:
 #-----------------------------------------
 # スタックが作成するリソース
 #-----------------------------------------
+#-----------------------------------------
+# VPCエンドポイント
+# プライベートサブネットのSSM接続に必要
+#-----------------------------------------
+  # SSMのVPCエンドポイント
+  SSMVPCEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcId: !Ref VPCId
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.ssm
+      SubnetIds:
+        - !Ref SubnetId
+      SecurityGroupIds:
+        - !Ref VPCEndpointSecurityGroup
+      VpcEndpointType: Interface
+      PrivateDnsEnabled: true
+      Tags:
+        - Key: Name
+          Value: ssm-endpoint
+
+  # SSMMessageのVPCエンドポイント
+  SSMMessageVPCEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcId: !Ref VPCId
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.ssmmessages
+      SubnetIds:
+        - !Ref SubnetId
+      SecurityGroupIds:
+        - !Ref VPCEndpointSecurityGroup
+      VpcEndpointType: Interface
+      PrivateDnsEnabled: true
+      Tags:
+        - Key: Name
+          Value: ssmmsg-endpoint
+
+  # EC2MessageのVPCエンドポイント
+  EC2MessageVPCEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcId: !Ref VPCId
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.ec2messages
+      SubnetIds:
+        - !Ref SubnetId
+      SecurityGroupIds:
+        - !Ref VPCEndpointSecurityGroup
+      VpcEndpointType: Interface
+      PrivateDnsEnabled: true
+      Tags:
+        - Key: Name
+          Value: ec2msg-endpoint
+
 
 Outputs:
 #-----------------------------------------
 # スタックの返り値を出力する部分
 #-----------------------------------------
+  # SSMのVPCエンドポイント
+  SSMVPCEndpoint:
+    Value: !Ref SSMVPCEndpoint
+
+  # SSMMessageのVPCエンドポイント
+  SSMMessageVPCEndpoint:
+    Value: !Ref SSMMessageVPCEndpoint
+
+  # EC2MessageのVPCエンドポイント
+  EC2MessageVPCEndpoint:
+    Value: !Ref EC2MessageVPCEndpoint
