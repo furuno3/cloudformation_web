@@ -92,21 +92,6 @@ Resources:
 # VPCエンドポイント
 # プライベートサブネットのSSM接続に必要
 #-----------------------------------------
-  # VPCエンドポイント用のセキュリティグループ
-  VPCEndpointSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Allow access to the VPC endpoint
-      VpcId: !Ref myVPC
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 443
-          ToPort: 443
-          CidrIp: 10.0.0.0/16
-      Tags:
-        - Key: Name
-          Value: VPCEndpointSecurityGroup
-
   # SSMMessageのVPCエンドポイント
   SSMVPCEndpoint:
     Type: AWS::EC2::VPCEndpoint
