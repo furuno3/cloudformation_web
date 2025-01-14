@@ -1,0 +1,25 @@
+
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+#-----------------------------------------
+# スタック作成時に手動で入力する項目
+#-----------------------------------------
+  VPCId:
+    Type: AWS::EC2::VPC::Id
+    Description: The VPC-Id where you want to set up the SSM endpoint.
+
+  SubnetId:
+    Type: AWS::EC2::Subnet::Id
+    Description: The Subnet-Id Where you wont to set up the SSM endpoint.
+
+
+Resources:
+#-----------------------------------------
+# スタックが作成するリソース
+#-----------------------------------------
+
+Outputs:
+#-----------------------------------------
+# スタックの返り値を出力する部分
+#-----------------------------------------
