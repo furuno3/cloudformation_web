@@ -113,5 +113,6 @@ Resources:
   vpcEndpointStack:
     Type: AWS::CloudFormation::Stack
     Properties:
+      TemplateURL: https://test-f-aidai.s3.ap-northeast-1.amazonaws.com/CLF-template/vpcEndpoint-ssm.yaml
       VPCId: !GetAtt vpcStack.Outputs.VPCID
       SubnetId: !GetAtt vpcStack.Outputs.privateSubnetID
