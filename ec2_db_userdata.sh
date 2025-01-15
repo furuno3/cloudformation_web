@@ -28,14 +28,34 @@ systemctl start rsyslog
 dnf -y install collectd
 
 # mysqlサーバーをインストール
-dnf install mysql-server -y
-dnf localinstall https://dev.mysql.com/get/mysql80-community-release-el9-5.noarch.rpm
-dnf install mysql-server -y
+dnf localinstall https://dev.mysql.com/get/mysql80-community-release-el9-5.noarch.rpm -y
+dnf install mysql-community-server -y
 
 # mysqlデーモンを起動
 systemctl start mysqld
 systemctl enable mysqld
 systemctl status mysqld
+
+# データベースの初期設定
+# 初期パスワード取得
+pass=$(sudo grep 'temporary password' /var/log/mysqld.log | awk '{print $13}')
+
+new_pass=Furuno@123
+
+# rootパスワードの変更
+mysql -u root -p"$pass" -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$new_pass'"
+
+# データベース作成
+mysql -u root -p"$new_pass" -e "CREATE DATABASE app_db;"
+
+# ユーザー作成
+mysql -u root -p"$new_pass" -e "CREATE USER 'dev_user'@'%' IDENTIFIED BY 'dev_user';"
+
+# 権限の付与
+mysql -u root -p"$new_pass" -e "GRANT ALL PRIVILEGES ON example_db.* TO 'dev_user'@'%';"
+
+# 変更を即座に反映させる
+mysql -u root -p"$new_pass" -e "FLUSH PRIVILEGES;"
 
 # CloudWatch Agentのインストールと設定
 dnf -y install amazon-cloudwatch-agent
