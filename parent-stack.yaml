@@ -123,6 +123,6 @@ Resources:
     Properties:
       TemplateURL: https://test-f-aidai.s3.ap-northeast-1.amazonaws.com/CLF-template/nat-gateway.yaml
       Parameters:
-        VPCId: !GetAtt vpcStack.Outputs.VPCID
+        VPC: !GetAtt vpcStack.Outputs.VPCID
         publicSubnet: !GetAtt vpcStack.Outputs.publicSubnetID
         privateSubnet: !GetAtt vpcStack.Outputs.privateSubnetID
