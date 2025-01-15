@@ -13,11 +13,6 @@ Parameters:
     Description: The AMI ID of the EC2 instance to be created.
     Type: AWS::EC2::Image::Id
 
-   # EC2のセキュリティグループID
-  EC2SecurityGroupId:
-    Description: The ID of the EC2 security group to be created.
-    Type: String
-
   # EC2のshiftタグの値
   EC2ShiftTag:
     Description: Set day or night shift tags for EC2.
