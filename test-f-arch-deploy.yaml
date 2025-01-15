@@ -1,0 +1,9 @@
+template-file-path: parent-stack.yaml
+parameters:
+  GroupName: f-test-users
+  EC2AMIId: ami-0ab02459752898a60
+  EC2ShiftTag: day
+  HostName: test-f-users-app
+  EC2ExcludeFromShutdownTag: 'True'
+  S3BucketName: test-f-aidai
+tags: {}
