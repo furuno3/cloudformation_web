@@ -49,7 +49,7 @@ mysql -u root -p"$pass" --connect-expired-password -e "ALTER USER 'root'@'localh
 mysql -u root -p"$new_pass" -e "CREATE DATABASE app_db;"
 
 # ユーザー作成
-mysql -u root -p"$new_pass" -e "CREATE USER 'dev_user'@'%' IDENTIFIED BY 'dev_user';"
+mysql -u root -p"$new_pass" -e "CREATE USER 'dev_user'@'%' IDENTIFIED BY 'Dev@1111';"
 
 # 権限の付与
 mysql -u root -p"$new_pass" -e "GRANT ALL PRIVILEGES ON example_db.* TO 'dev_user'@'%';"

@@ -31,8 +31,7 @@ systemctl restart httpd
 #dnf -y install php php-mysqlnd php-gd php-intl php-zip
 
 # MySQLクライアントのインストール
-dnf -y localinstall https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
-rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2023
+dnf localinstall https://dev.mysql.com/get/mysql80-community-release-el9-5.noarch.rpm -y
 dnf -y install mysql-community-client
 
 # WordPressをダウンロードしてドキュメントルートに移動
