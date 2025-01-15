@@ -43,7 +43,7 @@ pass=$(sudo grep 'temporary password' /var/log/mysqld.log | awk '{print $13}')
 new_pass=Furuno@123
 
 # rootパスワードの変更
-mysql -u root -p"$pass" -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$new_pass'"
+mysql -u root -p"$pass" --connect-expired-password -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'Furuno@123'"
 
 # データベース作成
 mysql -u root -p"$new_pass" -e "CREATE DATABASE app_db;"
