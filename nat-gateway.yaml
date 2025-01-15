@@ -1,0 +1,73 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+#-----------------------------------------
+# スタック作成時に手動で入力する項目
+#-----------------------------------------
+  VPC:
+    Description: The ID of the VPC where the NAT Gateway will be created
+    Type: AWS::EC2::VPC::Id
+
+  # NATゲートウェイをおくパブリックサブネット
+  publicSubnet:
+    Description: The ID of the public subnet where the NAT Gateway will be created
+    Type: AWS::EC2::Subnet::Id
+
+  # NATゲートウェイへのルートを紐づけるプライベートサブネット
+  privateSubnet:
+    Description: The ID of the public subnet where the NAT Gateway will be created
+    Type: AWS::EC2::Subnet::Id
+
+Resources:
+#-----------------------------------------
+# スタックが作成するリソース
+#-----------------------------------------
+
+#-----------------------------------------
+# NATゲートウェイのElastic IP
+#-----------------------------------------
+  NatGatewayEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+         Domain: vpc
+
+#-----------------------------------------
+# NATゲートウェイ
+#-----------------------------------------
+  NatGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt NatGatewayEIP.AllocationId
+      SubnetId: !Ref publicSubnet
+      Tags:
+           - Key: Name
+             Value: MyNatGateway
+
+#-------- ---------------------------------
+# ルートテーブル
+#-----------------------------------------
+  # private subnetのルートテーブル
+  privateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+         VpcId: !Ref VPC
+
+  # NATゲートウェイへのルート
+  privateRoute:
+    Type: AWS::EC2::Route
+    Properties:
+         RouteTableId: !Ref privateRouteTable
+         DestinationCidrBlock: 0.0.0.0/0
+         NatGatewayId: !Ref NatGateway
+
+  # プライベートサブネットとルートテーブルの紐づけ
+  privateSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+         RouteTableId: !Ref privateRouteTable
+         SubnetId: !Ref privateSubnet
+
+#Outputs:
+#-----------------------------------------
+# スタックの返り値を出力する部分
+#-----------------------------------------
