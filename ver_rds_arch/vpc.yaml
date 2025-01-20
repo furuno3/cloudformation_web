@@ -41,15 +41,26 @@ Resources:
         - Key: Name
           Value: public-subnet
 
-  privateSubnet:
+  privateSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: !Select [1, !GetAZs ""]
+      AvailabilityZone: !Select [0, !GetAZs ""]
       VpcId: !Ref myVPC
       CidrBlock: 10.0.2.0/24
       Tags:
         - Key: Name
-          Value: private-subnet
+          Value: private-subnet1
+
+  privateSubnet2:
+      Type: AWS::EC2::Subnet
+      Properties:
+        AvailabilityZone: !Select [1 !GetAZs ""]
+        VpcId: !Ref myVPC
+        CidrBlock: 10.0.3.0/24
+        Tags:
+          - Key: Name
+            Value: private-subnet2
+
 
 #-----------------------------------------
 # Internet Gateway
@@ -95,8 +106,11 @@ Outputs:
   publicSubnetID:
     Value: !Ref publicSubnet
 
-  privateSubnetID:
-    Value: !Ref privateSubnet
+  privateSubnetID1:
+    Value: !Ref privateSubnet1
+
+  privateSubnetID2:
+    Value: !Ref privateSubnet2
 
   VPCID:
     Value: !Ref myVPC
