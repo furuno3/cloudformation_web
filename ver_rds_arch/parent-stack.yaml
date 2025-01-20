@@ -76,21 +76,22 @@ Resources:
            S3BucketName: !Ref S3BucketName
            ScriptUserDataPath: script/ec2_userdata.sh
 
-  DBEC2Stack:
+#-----------------------------------------
+# RDS
+#-----------------------------------------
+  RDSStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://test-f-aidai.s3.ap-northeast-1.amazonaws.com/CLF-template/ec2.yaml
-      Parameters:
-           EC2InstanceName: !Sub ${GroupName}-db
-           EC2AMIId: !Ref EC2AMIId
-           EC2SecurityGroupId: !GetAtt securityGroupStack.Outputs.DataBaseSecurityGroupId
-           PublicSubnetId: !GetAtt vpcStack.Outputs.privateSubnetID
-           EC2ShiftTag: !Ref EC2ShiftTag
-           EC2ExcludeFromShutdownTag: !Ref EC2ExcludeFromShutdownTag
-           HostName: !Sub ${GroupName}-db-server
-           S3BucketName: !Ref S3BucketName
-           ScriptUserDataPath: script/ec2_db_userdata.sh
-
+      TemplateURL:
+      DBInstanceIdentifier: !Sub ${GroupName}-rds
+      privateSubnetId1: !GetAtt vpcStack.Outputs.publicSubnet1
+      PrivateSubnetId2: !GetAtt vpcStack.Outputs.publicSubnet2
+      DBName: !Sub ${GroupName}-db
+      DBMasterUserName: administrator
+      DBMasterUserPassword: administrator
+      RDSSecurityGroupId: !GetAtt securityGroupStack.OutPuts.DataBaseSecurityGroupId
+      RDSShiftTag: !Ref EC2ShiftTag
+      RDSExcludeFromShutdownTag: !Ref EC2ExcludeFromShutdownTag
 
 #-----------------------------------------
 # securityGroup
