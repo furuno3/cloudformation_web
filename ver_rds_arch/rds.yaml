@@ -10,12 +10,12 @@ Parameters:
     AllowedPattern: ^[a-zA-Z](?!.*--)[a-zA-Z0-9\-]*[a-zA-Z0-9]$
 
   # プライベートサブネット1 ID
-  PrivateSubnet1Id:
+  PrivateSubnetId1:
     Description: The ID of the private subnet 1 to be created.
     Type: AWS::EC2::Subnet::Id
 
   # プライベートサブネット2 ID
-  PrivateSubnet2Id:
+  PrivateSubnetId2:
     Description: The ID of the private subnet 2 to be created.
     Type: AWS::EC2::Subnet::Id
 
@@ -73,8 +73,8 @@ Resources:
       DBSubnetGroupDescription: test db subnet group
       DBSubnetGroupName: !Sub ${DBInstanceIdentifier}-subnet-group
       SubnetIds:
-        - !Ref PrivateSubnet1Id
-        - !Ref PrivateSubnet2Id
+        - !Ref PrivateSubnetId1
+        - !Ref PrivateSubnetId2
 
 #----------------------------------------
 # RDS DBインスタンス
