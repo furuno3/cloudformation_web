@@ -1,0 +1,128 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: app - db arch for aidai
+
+# スタック作成時に手動で入力する項目
+Parameters:
+  # リソースのグループ名
+  GroupName:
+    Description: resource group name.
+    Type: String
+
+  # EC2のAMI ID
+  EC2AMIId:
+    Description: The AMI ID of the EC2 instance to be created.
+    Type: AWS::EC2::Image::Id
+
+  # EC2のshiftタグの値
+  EC2ShiftTag:
+    Description: Set day or night shift tags for EC2.
+    Type: String
+    AllowedValues:
+      - day
+      - night
+
+  # EC2のexclude_from_shutdownタグの値
+  EC2ExcludeFromShutdownTag:
+    Description: Set True or False exclude_from_shutdown tags for EC2.
+    Type: String
+    AllowedValues:
+      - 'True'
+      - 'False'
+
+  # ホスト名
+  HostName:
+    Description: The name of the host to be created.
+    Type: String
+    MinLength: 1
+    MaxLength: 63
+    AllowedPattern: ^[a-z0-9][a-z0-9\-]*[a-z0-9]$
+
+  # S3のバケット名
+  S3BucketName:
+    Description: The name of the S3 bucket.
+    Type: String
+    MinLength: 3
+    MaxLength: 63
+    AllowedPattern: ^[a-z0-9](?!.*\.\.)(?!.*\.-)(?!.*-\.)[a-z0-9\.\-]*[a-z0-9]$
+
+# スタックが作成するリソース
+Resources:
+#-----------------------------------------
+# VPC
+#-----------------------------------------
+  vpcStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://test-f-aidai.s3.ap-northeast-1.amazonaws.com/CLF-template/vpc.yaml
+      Parameters:
+           VPCCiderBlock: 10.0.0.0/16
+           VPCName: !Sub ${GroupName}-VPC
+
+#-----------------------------------------
+# EC2
+#-----------------------------------------
+  AppEC2Stack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://test-f-aidai.s3.ap-northeast-1.amazonaws.com/CLF-template/ec2.yaml
+      Parameters:
+           EC2InstanceName: !Sub ${GroupName}-app
+           EC2AMIId: !Ref EC2AMIId
+           EC2SecurityGroupId: !GetAtt securityGroupStack.Outputs.EC2SecurityGroupId
+           PublicSubnetId: !GetAtt vpcStack.Outputs.publicSubnetID
+           EC2ShiftTag: !Ref EC2ShiftTag
+           EC2ExcludeFromShutdownTag: !Ref EC2ExcludeFromShutdownTag
+           HostName: !Sub ${GroupName}-app-server
+           S3BucketName: !Ref S3BucketName
+           ScriptUserDataPath: script/ec2_userdata.sh
+
+  DBEC2Stack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://test-f-aidai.s3.ap-northeast-1.amazonaws.com/CLF-template/ec2.yaml
+      Parameters:
+           EC2InstanceName: !Sub ${GroupName}-db
+           EC2AMIId: !Ref EC2AMIId
+           EC2SecurityGroupId: !GetAtt securityGroupStack.Outputs.DataBaseSecurityGroupId
+           PublicSubnetId: !GetAtt vpcStack.Outputs.privateSubnetID
+           EC2ShiftTag: !Ref EC2ShiftTag
+           EC2ExcludeFromShutdownTag: !Ref EC2ExcludeFromShutdownTag
+           HostName: !Sub ${GroupName}-db-server
+           S3BucketName: !Ref S3BucketName
+           ScriptUserDataPath: script/ec2_db_userdata.sh
+
+
+#-----------------------------------------
+# securityGroup
+#-----------------------------------------
+  securityGroupStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://test-f-aidai.s3.ap-northeast-1.amazonaws.com/CLF-template/securitygroup.yaml
+      Parameters:
+           VPCId: !GetAtt vpcStack.Outputs.VPCID
+
+#-----------------------------------------
+# VPCEndpoint
+#-----------------------------------------
+  vpcEndpointStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://test-f-aidai.s3.ap-northeast-1.amazonaws.com/CLF-template/vpcEndpoint-ssm.yaml
+      Parameters:
+        VPCId: !GetAtt vpcStack.Outputs.VPCID
+        SubnetId: !GetAtt vpcStack.Outputs.privateSubnetID
+        SecurityGroupId: !GetAtt securityGroupStack.Outputs.VPCEndpointSecurityGroupId
+
+
+#-----------------------------------------
+# NatGateway
+#-----------------------------------------
+  natGatewayStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://test-f-aidai.s3.ap-northeast-1.amazonaws.com/CLF-template/nat-gateway.yaml
+      Parameters:
+        VPC: !GetAtt vpcStack.Outputs.VPCID
+        publicSubnet: !GetAtt vpcStack.Outputs.publicSubnetID
+        privateSubnet: !GetAtt vpcStack.Outputs.privateSubnetID

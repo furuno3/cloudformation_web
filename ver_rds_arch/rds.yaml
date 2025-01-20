@@ -1,0 +1,109 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  # RDSのDBインスタンス識別子
+  DBInstanceIdentifier:
+    Description: The identifier of the DB instance to be created.
+    Type: String
+    MinLength: 1
+    MaxLength: 60
+    AllowedPattern: ^[a-zA-Z](?!.*--)[a-zA-Z0-9\-]*[a-zA-Z0-9]$
+
+  # プライベートサブネット1 ID
+  PrivateSubnet1Id:
+    Description: The ID of the private subnet 1 to be created.
+    Type: AWS::EC2::Subnet::Id
+
+  # プライベートサブネット2 ID
+  PrivateSubnet2Id:
+    Description: The ID of the private subnet 2 to be created.
+    Type: AWS::EC2::Subnet::Id
+
+  # データベースの名前
+  DBName:
+    Description: The name of the database to be created.
+    Type: String
+    MinLength: 1
+    MaxLength: 64
+    AllowedPattern: ^[a-zA-Z0-9]*$
+
+  # データベースのマスターユーザー名
+  DBMasterUserName:
+    Description: The master username of the database to be created.
+    Type: String
+    MinLength: 1
+    MaxLength: 16
+    AllowedPattern: ^[a-zA-Z][a-zA-Z0-9]*$
+
+  # データベースのマスターパスワード
+  DBMasterUserPassword:
+    Description: The master password of the database to be created.
+    Type: String
+    MinLength: 8
+    MaxLength: 41
+
+  # RDSのセキュリティグループID
+  RDSSecurityGroupId:
+    Description: The ID of the RDS security group to be created.
+    Type: String
+
+  # RDSのshiftタグの値
+  RDSShiftTag:
+    Description: Set day or night shift tags for RDS.
+    Type: String
+    AllowedValues:
+      - day
+      - night
+
+  # RDSのexclude_from_shutdownタグの値
+  RDSExcludeFromShutdownTag:
+    Description: Set True or False exclude_from_shutdown tags for RDS.
+    Type: String
+    AllowedValues:
+      - "True"
+      - "False"
+
+Resources:
+#----------------------------------------
+# RDS DBサブネットグループ
+#----------------------------------------
+  MyRDSDBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: test db subnet group
+      DBSubnetGroupName: !Sub ${DBInstanceIdentifier}-subnet-group
+      SubnetIds:
+        - !Ref PrivateSubnet1Id
+        - !Ref PrivateSubnet2Id
+
+#----------------------------------------
+# RDS DBインスタンス
+#----------------------------------------
+  MyRDSDBInstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: !Ref DBInstanceIdentifier
+      DBName: !Ref DBName
+      DBInstanceClass: db.t3.micro
+      AllocatedStorage: 20
+      Engine: mysql
+      EngineVersion: 8.0.39
+      MasterUsername: !Ref DBMasterUserName
+      MasterUserPassword: !Ref DBMasterUserPassword
+      MultiAZ: true
+      DBSubnetGroupName: !Ref MyRDSDBSubnetGroup
+      VPCSecurityGroups:
+        - !Ref RDSSecurityGroupId
+      AutoMinorVersionUpgrade: true
+      PreferredMaintenanceWindow: sat:16:00-sat:18:00
+      Tags:
+        - Key: shift
+          Value: !Ref RDSShiftTag
+        - Key: exclude_from_shutdown
+          Value: !Ref RDSExcludeFromShutdownTag
+      CopyTagsToSnapshot: true
+
+Outputs:
+  # RDSのエンドポイント
+  RDSEndpoint:
+    Value: !GetAtt MyRDSDBInstance.Endpoint.Address
