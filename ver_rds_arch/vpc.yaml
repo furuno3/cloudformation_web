@@ -35,7 +35,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       AvailabilityZone: !Select [0, !GetAZs ""]
-      VpcId: !Ref myVPC
+      VpcId: !Ref MyVPC
       CidrBlock: 10.0.1.0/24
       Tags:
         - Key: Name
@@ -45,7 +45,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       AvailabilityZone: !Select [0, !GetAZs ""]
-      VpcId: !Ref myVPC
+      VpcId: !Ref MyVPC
       CidrBlock: 10.0.2.0/24
       Tags:
         - Key: Name
@@ -55,7 +55,7 @@ Resources:
       Type: AWS::EC2::Subnet
       Properties:
         AvailabilityZone: !Select [1, !GetAZs ""]
-        VpcId: !Ref myVPC
+        VpcId: !Ref MyVPC
         CidrBlock: 10.0.3.0/24
         Tags:
           - Key: Name
@@ -75,13 +75,13 @@ Resources:
   AttachGateway:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
-      VpcId: !Ref myVPC
+      VpcId: !Ref MyVPC
       InternetGatewayId: !Ref myInternetGateway
 
   MyRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: !Ref myVPC
+      VpcId: !Ref MyVPC
       Tags:
         - Key: Name
           Value: myRTB
