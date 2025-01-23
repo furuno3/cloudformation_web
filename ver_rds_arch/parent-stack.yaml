@@ -69,7 +69,7 @@ Resources:
            EC2InstanceName: !Sub ${GroupName}-app
            EC2AMIId: !Ref EC2AMIId
            EC2SecurityGroupId: !GetAtt SecurityGroupStack.Outputs.EC2SecurityGroupId
-           PublicSubnetId: !GetAtt VpcStack.Outputs.publicSubnetID
+           PublicSubnetId: !GetAtt VpcStack.Outputs.PublicSubnetID
            EC2ShiftTag: !Ref EC2ShiftTag
            EC2ExcludeFromShutdownTag: !Ref EC2ExcludeFromShutdownTag
            HostName: !Sub ${GroupName}-app-server
@@ -95,8 +95,8 @@ Resources:
       TemplateURL: https://test-f-aidai.s3.ap-northeast-1.amazonaws.com/CLF-template/rds.yaml
       Parameters:
         DBInstanceIdentifier: !Sub ${GroupName}-rds
-        PrivateSubnetId1: !GetAtt VpcStack.Outputs.privateSubnetID1
-        PrivateSubnetId2: !GetAtt VpcStack.Outputs.privateSubnetID2
+        PrivateSubnetId1: !GetAtt VpcStack.Outputs.PrivateSubnetID1
+        PrivateSubnetId2: !GetAtt VpcStack.Outputs.PrivateSubnetID2
         DBName: !Sub ${GroupName}DB
         DBMasterUserName: administrator
         DBMasterUserPassword: administrator
