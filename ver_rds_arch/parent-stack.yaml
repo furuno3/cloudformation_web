@@ -77,23 +77,6 @@ Resources:
            ScriptUserDataPath: script/ec2_userdata.sh
 
 #-----------------------------------------
-# RDS
-#-----------------------------------------
-  RDSStack:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL:
-      DBInstanceIdentifier: !Sub ${GroupName}-rds
-      privateSubnetId1: !GetAtt vpcStack.Outputs.publicSubnet1
-      PrivateSubnetId2: !GetAtt vpcStack.Outputs.publicSubnet2
-      DBName: !Sub ${GroupName}-db
-      DBMasterUserName: administrator
-      DBMasterUserPassword: administrator
-      RDSSecurityGroupId: !GetAtt securityGroupStack.OutPuts.DataBaseSecurityGroupId
-      RDSShiftTag: !Ref EC2ShiftTag
-      RDSExcludeFromShutdownTag: !Ref EC2ExcludeFromShutdownTag
-
-#-----------------------------------------
 # securityGroup
 #-----------------------------------------
   securityGroupStack:
@@ -102,6 +85,24 @@ Resources:
       TemplateURL: https://test-f-aidai.s3.ap-northeast-1.amazonaws.com/CLF-template/securitygroup.yaml
       Parameters:
            VPCId: !GetAtt vpcStack.Outputs.VPCID
+
+#-----------------------------------------
+# RDS
+#-----------------------------------------
+  RDSStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://test-f-aidai.s3.ap-northeast-1.amazonaws.com/CLF-template/rds.yaml
+      Parameters:
+        DBInstanceIdentifier: !Sub ${GroupName}-rds
+        privateSubnetId1: !GetAtt vpcStack.Outputs.privateSubnet1
+        PrivateSubnetId2: !GetAtt vpcStack.Outputs.privateSubnet2
+        DBName: !Sub ${GroupName}DB
+        DBMasterUserName: administrator
+        DBMasterUserPassword: administrator
+        RDSSecurityGroupId: !GetAtt securityGroupStack.Outputs.DataBaseSecurityGroupId
+        RDSShiftTag: !Ref EC2ShiftTag
+        RDSExcludeFromShutdownTag: !Ref EC2ExcludeFromShutdownTag
 
 #-----------------------------------------
 # VPCEndpoint
