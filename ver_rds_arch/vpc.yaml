@@ -18,7 +18,7 @@ Resources:
 #-----------------------------------------
 # VPC
 #-----------------------------------------
-  myVPC:
+  MyVPC:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: !Ref VPCCiderBlock
@@ -31,7 +31,7 @@ Resources:
 #-----------------------------------------
 # subnet
 #-----------------------------------------
-  publicSubnet:
+  PublicSubnet:
     Type: AWS::EC2::Subnet
     Properties:
       AvailabilityZone: !Select [0, !GetAZs ""]
@@ -41,7 +41,7 @@ Resources:
         - Key: Name
           Value: public-subnet
 
-  privateSubnet1:
+  PrivateSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
       AvailabilityZone: !Select [0, !GetAZs ""]
@@ -51,10 +51,10 @@ Resources:
         - Key: Name
           Value: private-subnet1
 
-  privateSubnet2:
+  PrivateSubnet2:
       Type: AWS::EC2::Subnet
       Properties:
-        AvailabilityZone: !Select [1 !GetAZs ""]
+        AvailabilityZone: !Select [1, !GetAZs ""]
         VpcId: !Ref myVPC
         CidrBlock: 10.0.3.0/24
         Tags:
@@ -65,7 +65,7 @@ Resources:
 #-----------------------------------------
 # Internet Gateway
 #-----------------------------------------
-  myInternetGateway:
+  MyInternetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
@@ -78,7 +78,7 @@ Resources:
       VpcId: !Ref myVPC
       InternetGatewayId: !Ref myInternetGateway
 
-  myRouteTable:
+  MyRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref myVPC
@@ -86,14 +86,14 @@ Resources:
         - Key: Name
           Value: myRTB
 
-  myRoute:
+  MyRoute:
     Type: AWS::EC2::Route
     Properties:
       RouteTableId: !Ref myRouteTable
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref myInternetGateway
 
-  routeTableAssocName:
+  RouteTableAssocName:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId: !Ref publicSubnet
@@ -103,14 +103,14 @@ Outputs:
 #-----------------------------------------
 # スタックの返り値を出力する部分
 #-----------------------------------------
-  publicSubnetID:
-    Value: !Ref publicSubnet
+  PublicSubnetID:
+    Value: !Ref PublicSubnet
 
-  privateSubnetID1:
-    Value: !Ref privateSubnet1
+  PrivateSubnetID1:
+    Value: !Ref PrivateSubnet1
 
-  privateSubnetID2:
-    Value: !Ref privateSubnet2
+  PrivateSubnetID2:
+    Value: !Ref PrivateSubnet2
 
   VPCID:
-    Value: !Ref myVPC
+    Value: !Ref MyVPC

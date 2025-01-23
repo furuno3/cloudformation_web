@@ -95,8 +95,8 @@ Resources:
       TemplateURL: https://test-f-aidai.s3.ap-northeast-1.amazonaws.com/CLF-template/rds.yaml
       Parameters:
         DBInstanceIdentifier: !Sub ${GroupName}-rds
-        privateSubnetId1: !GetAtt vpcStack.Outputs.privateSubnet1
-        PrivateSubnetId2: !GetAtt vpcStack.Outputs.privateSubnet2
+        PrivateSubnetId1: !GetAtt vpcStack.Outputs.privateSubnetID1
+        PrivateSubnetId2: !GetAtt vpcStack.Outputs.privateSubnetID2
         DBName: !Sub ${GroupName}DB
         DBMasterUserName: administrator
         DBMasterUserPassword: administrator

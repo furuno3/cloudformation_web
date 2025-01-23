@@ -45,7 +45,7 @@ Parameters:
   # RDSのセキュリティグループID
   RDSSecurityGroupId:
     Description: The ID of the RDS security group to be created.
-    Type: String
+    Type: AWS::EC2::SecurityGroup::Id
 
   # RDSのshiftタグの値
   RDSShiftTag:
