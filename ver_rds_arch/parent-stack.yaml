@@ -50,7 +50,7 @@ Resources:
 #-----------------------------------------
 # VPC
 #-----------------------------------------
-  vpcStack:
+  VpcStack:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: https://test-f-aidai.s3.ap-northeast-1.amazonaws.com/CLF-template/vpc.yaml
@@ -68,8 +68,8 @@ Resources:
       Parameters:
            EC2InstanceName: !Sub ${GroupName}-app
            EC2AMIId: !Ref EC2AMIId
-           EC2SecurityGroupId: !GetAtt securityGroupStack.Outputs.EC2SecurityGroupId
-           PublicSubnetId: !GetAtt vpcStack.Outputs.publicSubnetID
+           EC2SecurityGroupId: !GetAtt SecurityGroupStack.Outputs.EC2SecurityGroupId
+           PublicSubnetId: !GetAtt VpcStack.Outputs.publicSubnetID
            EC2ShiftTag: !Ref EC2ShiftTag
            EC2ExcludeFromShutdownTag: !Ref EC2ExcludeFromShutdownTag
            HostName: !Sub ${GroupName}-app-server
@@ -79,12 +79,12 @@ Resources:
 #-----------------------------------------
 # securityGroup
 #-----------------------------------------
-  securityGroupStack:
+  SecurityGroupStack:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: https://test-f-aidai.s3.ap-northeast-1.amazonaws.com/CLF-template/securitygroup.yaml
       Parameters:
-           VPCId: !GetAtt vpcStack.Outputs.VPCID
+           VPCId: !GetAtt VpcStack.Outputs.VPCID
 
 #-----------------------------------------
 # RDS
@@ -100,6 +100,6 @@ Resources:
         DBName: !Sub ${GroupName}DB
         DBMasterUserName: administrator
         DBMasterUserPassword: administrator
-        RDSSecurityGroupId: !GetAtt securityGroupStack.Outputs.DataBaseSecurityGroupId
+        RDSSecurityGroupId: !GetAtt SecurityGroupStack.Outputs.DataBaseSecurityGroupId
         RDSShiftTag: !Ref EC2ShiftTag
         RDSExcludeFromShutdownTag: !Ref EC2ExcludeFromShutdownTag
