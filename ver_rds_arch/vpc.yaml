@@ -76,7 +76,7 @@ Resources:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
       VpcId: !Ref MyVPC
-      InternetGatewayId: !Ref myInternetGateway
+      InternetGatewayId: !Ref MyInternetGateway
 
   MyRouteTable:
     Type: AWS::EC2::RouteTable
@@ -89,15 +89,15 @@ Resources:
   MyRoute:
     Type: AWS::EC2::Route
     Properties:
-      RouteTableId: !Ref myRouteTable
+      RouteTableId: !Ref MyRouteTable
       DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: !Ref myInternetGateway
+      GatewayId: !Ref MyInternetGateway
 
   RouteTableAssocName:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref publicSubnet
-      RouteTableId: !Ref myRouteTable
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref MyRouteTable
 
 Outputs:
 #-----------------------------------------
