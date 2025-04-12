@@ -1,0 +1,3 @@
+template-file-path: parent-stack.yaml
+parameters: {}
+tags: {}
